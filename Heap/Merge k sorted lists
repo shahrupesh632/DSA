@@ -1,0 +1,34 @@
+#include<queue>
+class Compare{
+    public:
+    bool operator()(Node<int>* a,Node<int>* b)
+    {
+        return a->data > b->data;
+    }
+};
+Node<int>* mergeKLists(vector<Node<int>*> &listArray)
+{
+    priority_queue<Node<int>*,vector<Node<int>*>,Compare> minHeap;
+    Node<int>* head=NULL;
+    Node<int>* tail=NULL;
+    for(int i=0;i<listArray.size();i++){
+        Node<int>* tmp= listArray[i];
+        if(tmp)
+        minHeap.push(tmp);
+    }
+    while(!minHeap.empty()){
+         Node<int>* top=minHeap.top();
+        minHeap.pop();
+        if(top->next)
+            minHeap.push(top->next);
+        if(head==NULL){
+            head=top;
+            tail=top;
+        }
+        else{
+            tail->next=top;
+            tail=top;
+        }
+}
+    return head;
+}
