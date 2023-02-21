@@ -1,6 +1,7 @@
 #include<unordered_map>
 #include<list>
 #include<queue>
+// using BFS
 bool isCycleBFS(unordered_map<int,list<int>>&adj,unordered_map<int,bool>&visited,int src){
     unordered_map<int,int>parent;
     parent[src]=-1;
@@ -19,6 +20,24 @@ bool isCycleBFS(unordered_map<int,list<int>>&adj,unordered_map<int,bool>&visited
                 visited[neighbour]=1;
                 parent[neighbour]=front;
             }
+        }
+    }
+    return false;
+}
+//using DFS
+bool isCyclicDFS(int node,int parent,unordered_map<int,list<int>>&adj,
+                 unordered_map<int,bool>&visited)
+{
+    visited[node]=true;
+    for(auto i:adj[node]){
+        if(!visited[i]){
+            bool cycle= isCyclicDFS(i,node,adj,visited);
+            if(cycle)
+            return true;
+        }
+        else{
+            if(i !=parent)
+            return true;
         }
     }
     return false;
