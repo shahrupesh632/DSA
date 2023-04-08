@@ -1,0 +1,103 @@
+#include <bits/stdc++.h> 
+int solve(vector<int>&w, vector<int>&v, int n, int c){
+	if(n==0){
+		if(w[n]<=c)
+			return v[n];
+		else
+			return 0;
+	}
+	int include=0;
+	if(w[n]<=c)
+		include=v[n]+solve(w,v,n-1,c-w[n]);
+	int exclude=solve(w,v,n-1,c);
+	return max(include,exclude);
+}
+int solveMem(vector<int>&w, vector<int>&v, int n, int c,vector<vector<int>>&dp){
+	if(n==0){
+		if(w[n]<=c)
+			return v[n];
+		else
+			return 0;
+	}
+	if(dp[n][c]!=-1)
+		return dp[n][c];
+	int include=0;
+	if(w[n]<=c)
+		include=v[n]+solveMem(w,v,n-1,c-w[n],dp);
+	int exclude=solveMem(w,v,n-1,c,dp);
+	return dp[n][c]=max(include,exclude);
+}
+int solveTab(vector<int>&weight, vector<int>&value, int n, int capacity){
+	vector<vector<int>> dp(n,vector<int>(capacity+1,0));
+	for(int w=weight[0];w<=capacity;w++){
+		if(weight[0]<=capacity)
+			dp[0][w]=value[0];
+		else
+			dp[0][w]=0;
+	}
+	for(int index=1;index<n;index++){
+		for(int w=0;w<=capacity;w++){
+			int inc=0;
+			if(weight[index]<=w)
+				inc=value[index]+dp[index-1][w-weight[index]];
+			int exclude=dp[index-1][w];
+			dp[index][w]=max(inc,exclude);
+		}
+	}
+	return dp[n-1][capacity];
+	
+}
+int solveTabS(vector<int>&weight, vector<int>&value, int n, int capacity){
+	vector<int>prev(capacity+1,0);
+	vector<int>curr(capacity+1,0);
+
+	for(int w=weight[0];w<=capacity;w++){
+		if(weight[0]<=capacity)
+			prev[w]=value[0];
+		else
+			prev[w]=0;
+	}
+	for(int index=1;index<n;index++){
+		for(int w=0;w<=capacity;w++){
+			int inc=0;
+			if(weight[index]<=w)
+				inc=value[index]+prev[w-weight[index]];
+			int exclude=prev[w];
+			curr[w]=max(inc,exclude);
+		}
+		prev=curr;
+	}
+	return prev[capacity];
+	
+}
+int solveTabOptimized(vector<int>&weight, vector<int>&value, int n, int capacity){
+	// vector<int>prev(capacity+1,0);
+	vector<int>curr(capacity+1,0);
+
+	for(int w=weight[0];w<=capacity;w++){
+		if(weight[0]<=capacity)
+			curr[w]=value[0];
+		else
+			curr[w]=0;
+	}
+	for(int index=1;index<n;index++){
+		for(int w=capacity;w>=0;w--){
+			int inc=0;
+			if(weight[index]<=w)
+				inc=value[index]+curr[w-weight[index]];
+			int exclude=curr[w];
+			curr[w]=max(inc,exclude);
+		}
+	}
+	return curr[capacity];
+	
+}
+int knapsack(vector<int> weight, vector<int> value, int n, int maxWeight) 
+{
+	// return solve(weight,value,n-1,maxWeight);
+
+	// vector<vector<int>> dp(n,vector<int>(maxWeight+1,-1));
+	// return solveMem(weight,value,n-1,maxWeight,dp);
+
+	return solveTabOptimized(weight,value,n,maxWeight);
+}
