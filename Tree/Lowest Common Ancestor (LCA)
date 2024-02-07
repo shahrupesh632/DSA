@@ -1,0 +1,12 @@
+Node* get_LCA(Node* root,int a,int b){
+        if(!root || root->data==a || root->data==b)
+            return root;
+        Node* left=get_LCA(root->left,a,b);
+        Node* right=get_LCA(root->right,a,b);
+        if(!left)
+            return right;
+        else if(!right)
+            return left;
+        else
+            return root;
+}
